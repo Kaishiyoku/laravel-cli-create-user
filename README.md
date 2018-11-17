@@ -1,8 +1,7 @@
 # Easily create, list and remove Laravel users with a CLI command
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/boaideas/laravel-cli-create-user.svg?style=flat-square)](https://packagist.org/packages/boaideas/laravel-cli-create-user)
-[![Software License](https://img.shields.io/packagist/l/boaideas/laravel-cli-create-user.svg?style=flat-square)](LICENSE)
-[![StyleCI](https://styleci.io/repos/100930843/shield?branch=master)](https://styleci.io/repos/100930843)
-[![Total Downloads](https://img.shields.io/packagist/dt/boaideas/laravel-cli-create-user.svg?style=flat-square)](https://packagist.org/packages/boaideas/laravel-cli-create-user)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kaishiyoku/laravel-cli-create-user.svg?style=flat-square)](https://packagist.org/packages/kaishiyoku/laravel-cli-create-user)
+[![Software License](https://img.shields.io/packagist/l/kaishiyoku/laravel-cli-create-user.svg?style=flat-square)](LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/kaishiyoku/laravel-cli-create-user.svg?style=flat-square)](https://packagist.org/packages/kaishiyoku/laravel-cli-create-user)
 
 Using this artisan command it's easy to create Laravel users from the CLI whenever you need them. If you want, it will even email the user their credentials.
 
@@ -19,19 +18,17 @@ The package is based on the defaul User model that ships with Laravel, so it ass
 You can install the package via composer:
 
 ```bash
-composer require boaideas/laravel-cli-create-user
+composer require kaishiyoku/laravel-cli-create-user
 ```
 
 If you're installing the package on Laravel 5.5 or higher, you're done (The package uses Laravel's auto package discovery).
-
-If you're using Laravel 5.4 or less, add the `BOAIdeas\CreateUser\CreateUserServiceProvider` service provider to your providers array:
 
 ```php
 // config/app.php
 
 'providers' => [
     ...
-    BOAIdeas\CreateUser\CreateUserServiceProvider::class,
+    Kaishiyoku\CreateUser\CreateUserServiceProvider::class,
 ];
 ```
 
@@ -79,37 +76,8 @@ By default, the package assumes your User model is called User and validates you
 If you want to change any of these settings, you can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="BOAIdeas\CreateUser\CreateUserServiceProvider"
+php artisan vendor:publish --provider="Kaishiyoku\CreateUser\CreateUserServiceProvider"
 ```
-
-This is the content of the published config file:
-
-```php
-// config/createuser.php
-
-return [
-    /*
-    * The class name of the media model to be used.
-    */
-    'model' => 'App\User',
-
-    /*
-    * The validation rules to check for user model input.
-    */
-    'validation_rules' => [
-    	'name' => 'string|max:255',
-    	'email' => 'string|email|max:255|unique:users',
-    	'password' => 'string|min:6',
-    ],
-
-];
-```
-
-## Credits
-
-- [Amos Shacham](https://github.com/amosmos)
-- [All Contributors](../../contributors)
-
 ## Alternatives
 
 - [laravel-make-user](https://github.com/michaeldyrynda/laravel-make-user)
