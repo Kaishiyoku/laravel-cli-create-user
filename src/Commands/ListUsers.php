@@ -1,6 +1,6 @@
 <?php
 
-namespace BOAIdeas\CreateUser\Commands;
+namespace Kaishiyoku\CreateUser\Commands;
 
 use Illuminate\Console\Command;
 
@@ -28,12 +28,14 @@ class ListUsers extends Command
     public function handle()
     {
         $model = config('createuser.model');
+
         $users = $model::all(['id', 'name', 'email', 'created_at', 'updated_at'])->toArray();
 
         if (count($users)) {
             $headers = ['ID', 'Name', 'E-mail', 'Created at', 'Updated at'];
 
             $this->info('There are '.count($users).' users:');
+
             $this->table($headers, $users);
         } else {
             $this->error('There are no users!');

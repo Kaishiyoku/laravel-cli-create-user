@@ -1,10 +1,10 @@
 <?php
 
-namespace BOAIdeas\CreateUser\Commands;
+namespace Kaishiyoku\CreateUser\Commands;
 
-use BOAIdeas\CreateUser\Notifications\UserAccountCreated as UserAccountCreatedNotification;
 use Illuminate\Console\Command;
-use Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class CreateUser extends Command
 {
@@ -22,56 +22,51 @@ class CreateUser extends Command
      */
     protected $description = 'Create a new laravel user';
 
-    /**
+    /**°
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        $name = $this->validate_ask('Enter user name', ['name' => config('createuser.validation_rules.name')]);
-        $email = $this->validate_ask('Enter user email', ['email' => config('createuser.validation_rules.email')]);
-
-        if ($this->confirm('Do you wish to create a random password?')) {
-            $password = str_random(8);
-            $this->info('*The randomly created password is: '.$password);
-        } else {
-            $password = $this->validate_ask('Enter user password', ['password' => config('createuser.validation_rules.password')]);
-        }
+        $name = $this->askWithValidation('Enter user name', ['name' => $this->getValidationRule('name')]);
+        $email = $this->askWithValidation('Enter user email', ['email' => $this->getValidationRule('email')]);
+        $password = $this->secretWithValidation('Enter user password', ['password' => $this->getValidationRule('password')]);
 
         $model = config('createuser.model');
 
         $user = new $model();
 
-        $user->name = $name;
+        $user['name'] = $name;
         $user->email = $email;
-        $user->password = bcrypt($password);
+        $user->password = Hash::make($password);
 
         $user->save();
 
         $this->info('New user created!');
-
-        if ($this->confirm('Do you wish to send the user a notification with their credentials?')) {
-            $user->notify(new UserAccountCreatedNotification($password));
-            $this->info('Email sent.');
-        }
     }
 
-    public function validate_ask($question, $rules)
+    private function askWithValidation($question, $rules, $secret = false)
     {
-        $value = $this->ask($question);
+        $value = $secret ? $this->secret($question) : $this->ask($question);
 
         $validate = $this->validateInput($rules, $value);
 
         if ($validate !== true) {
             $this->error($validate);
-            $value = $this->validate_ask($question, $rules);
+
+            $value = $this->askWithValidation($question, $rules); // ?
         }
 
         return $value;
     }
 
-    public function validateInput($rules, $value)
+    private function secretWithValidation($question, $rules)
+    {
+        return $this->askWithValidation($question, $rules, true);
+    }
+
+    private function validateInput($rules, $value)
     {
         $validator = Validator::make([key($rules) => $value], $rules);
 
@@ -80,5 +75,10 @@ class CreateUser extends Command
         }
 
         return true;
+    }
+
+    private function getValidationRule($key)
+    {
+        return config('createuser.validation_rules.' . $key);
     }
 }
