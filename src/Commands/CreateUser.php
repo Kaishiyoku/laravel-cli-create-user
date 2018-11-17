@@ -3,7 +3,6 @@
 namespace Kaishiyoku\CreateUser\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class CreateUser extends Command
@@ -29,21 +28,21 @@ class CreateUser extends Command
      */
     public function handle()
     {
-        $name = $this->askWithValidation('Enter user name', ['name' => $this->getValidationRule('name')]);
-        $email = $this->askWithValidation('Enter user email', ['email' => $this->getValidationRule('email')]);
-        $password = $this->secretWithValidation('Enter user password', ['password' => $this->getValidationRule('password')]);
-
+        $fields = config('createuser.fields');
         $model = config('createuser.model');
 
         $user = new $model();
 
-        $user['name'] = $name;
-        $user->email = $email;
-        $user->password = Hash::make($password);
+        foreach ($fields as $key => $field) {
+            $modifierFn = $field['modifier_fn'];
+            $value = $this->askWithValidation('Enter user ' . $key, [$key => $field['validation_rules']], $field['secret']);
+
+            $user[$key] = $modifierFn ? call_user_func($modifierFn, $value) : $value;
+        }
 
         $user->save();
 
-        $this->info('New user created!');
+        $this->info('New user created.');
     }
 
     private function askWithValidation($question, $rules, $secret = false)
@@ -55,15 +54,10 @@ class CreateUser extends Command
         if ($validate !== true) {
             $this->error($validate);
 
-            $value = $this->askWithValidation($question, $rules); // ?
+            $value = $this->askWithValidation($question, $rules);
         }
 
         return $value;
-    }
-
-    private function secretWithValidation($question, $rules)
-    {
-        return $this->askWithValidation($question, $rules, true);
     }
 
     private function validateInput($rules, $value)
@@ -75,10 +69,5 @@ class CreateUser extends Command
         }
 
         return true;
-    }
-
-    private function getValidationRule($key)
-    {
-        return config('createuser.validation_rules.' . $key);
     }
 }
