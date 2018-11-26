@@ -31,4 +31,8 @@ return [
         ],
     ],
 
+    'post_creation_fn' => function ($user) {
+        return $user;
+    },
+
 ];

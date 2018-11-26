@@ -42,6 +42,10 @@ class CreateUser extends Command
 
         $user->save();
 
+        $postCreationFn = config('createuser.post_creation_fn');
+
+        $postCreationFn($user);
+
         $this->info('New user created.');
     }
 
