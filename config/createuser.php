@@ -23,7 +23,7 @@ return [
             'modifier_fn' => null,
         ],
         'password' => [
-            'validation_rules' => 'string|min:6',
+            'validation_rules' => 'string|min:8',
             'secret' => true,
             'modifier_fn' => function ($value) {
                 return Hash::make($value);
