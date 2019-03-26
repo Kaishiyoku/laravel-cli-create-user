@@ -13,17 +13,17 @@ return [
     */
     'fields' => [
         'name'     => [
-            'validation_rules' => 'string|max:255',
+            'validation_rules' => ['string', 'max:255'],
             'secret' => false,
             'modifier_fn' => null,
         ],
         'email'    => [
-            'validation_rules' => 'string|email|max:255|unique:users',
+            'validation_rules' => ['string', 'email', 'max:255', 'unique:users'],
             'secret' => false,
             'modifier_fn' => null,
         ],
         'password' => [
-            'validation_rules' => 'string|min:8',
+            'validation_rules' => ['string', 'min:8'],
             'secret' => true,
             'modifier_fn' => function ($value) {
                 return Hash::make($value);
