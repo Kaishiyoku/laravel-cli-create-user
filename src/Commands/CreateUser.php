@@ -54,6 +54,8 @@ class CreateUser extends Command
         $postCreationFn($user);
 
         $this->info('New user created.');
+
+        return $user->id;
     }
 
     private function askWithValidation($question, $rules, $secret = false)
