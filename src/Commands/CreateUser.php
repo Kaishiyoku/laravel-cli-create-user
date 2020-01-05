@@ -32,7 +32,7 @@ class CreateUser extends Command
             return !empty($value);
         });
 
-        $fields = array_filter(array_keys(config('createuser.fields')), function ($key) use ($ignoredFields) {
+        $fields = collect(config('createuser.fields'))->filter(function ($field, $key) use ($ignoredFields) {
             return !in_array($key, $ignoredFields);
         });
 
