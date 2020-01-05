@@ -12,14 +12,14 @@ class CreateUser extends Command
      *
      * @var string
      */
-    protected $signature = 'user:create';
+    protected $signature = 'user:create {--ignore=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new laravel user';
+    protected $description = 'Create a new laravel user.';
 
     /**°
      * Execute the console command.
@@ -28,7 +28,14 @@ class CreateUser extends Command
      */
     public function handle()
     {
-        $fields = config('createuser.fields');
+        $ignoredFields = array_filter(explode(',', $this->option('ignore')), function ($value) {
+            return !empty($value);
+        });
+
+        $fields = array_filter(array_keys(config('createuser.fields')), function ($key) use ($ignoredFields) {
+            return !in_array($key, $ignoredFields);
+        });
+
         $model = config('createuser.model');
 
         $user = new $model();
