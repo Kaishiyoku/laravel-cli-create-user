@@ -41,7 +41,7 @@ class CreateUser extends Command
         $user = new $model();
 
         foreach ($fields as $key => $field) {
-            $modifierFn = $field['modifier_fn'];
+            $modifierFn = \Opis\Closure\unserialize($field['modifier_fn']);
             $value = $this->askWithValidation('Enter user ' . $key, [$key => $field['validation_rules']], $field['secret']);
 
             $user[$key] = $modifierFn ? call_user_func($modifierFn, $value) : $value;
@@ -49,7 +49,7 @@ class CreateUser extends Command
 
         $user->save();
 
-        $postCreationFn = config('createuser.post_creation_fn');
+        $postCreationFn = \Opis\Closure\unserialize(config('createuser.post_creation_fn'));
 
         $postCreationFn($user);
 

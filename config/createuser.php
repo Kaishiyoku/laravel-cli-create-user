@@ -25,14 +25,14 @@ return [
         'password' => [
             'validation_rules' => ['string', 'min:8'],
             'secret' => true,
-            'modifier_fn' => function ($value) {
+            'modifier_fn' => \Opis\Closure\serialize(function ($value) {
                 return Hash::make($value);
-            },
+            }),
         ],
     ],
 
-    'post_creation_fn' => function ($user) {
+    'post_creation_fn' => \Opis\Closure\serialize(function ($user) {
         return $user;
-    },
+    }),
 
 ];
