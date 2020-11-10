@@ -78,6 +78,11 @@ If you want to change any of these settings, you can publish the config file wit
 ```bash
 php artisan vendor:publish --provider="Kaishiyoku\CreateUser\CreateUserServiceProvider"
 ```
+
+## Config caching
+
+If you're using closures in your `createuser.php` config file and want it to be able to be cached, you have to serialize them using `\Opis\Closure\serialize()`.
+
 ## Alternatives
 
 - [laravel-make-user](https://github.com/michaeldyrynda/laravel-make-user)
