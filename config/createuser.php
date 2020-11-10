@@ -3,6 +3,12 @@
 use Illuminate\Support\Facades\Hash;
 
 return [
+
+    /*
+     * Whether or not the Opis Closure serialization is enabled
+     */
+    'enable_serialization' => true,
+
     /*
     * The class name of the user model to be used.
     */

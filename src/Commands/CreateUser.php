@@ -28,6 +28,10 @@ class CreateUser extends Command
      */
     public function handle()
     {
+        $isSerializationEnabled = config('createuser.enable_serialization') ?? false;
+
+        $unserializeFn = $isSerializationEnabled ? function ($data) { return \Opis\Closure\unserialize($data); } : function ($data) { return $data; };
+
         $ignoredFields = array_filter(explode(',', $this->option('ignore')), function ($value) {
             return !empty($value);
         });
@@ -41,7 +45,7 @@ class CreateUser extends Command
         $user = new $model();
 
         foreach ($fields as $key => $field) {
-            $modifierFn = \Opis\Closure\unserialize($field['modifier_fn']);
+            $modifierFn = $unserializeFn($field['modifier_fn']);
             $value = $this->askWithValidation('Enter user ' . $key, [$key => $field['validation_rules']], $field['secret']);
 
             $user[$key] = $modifierFn ? call_user_func($modifierFn, $value) : $value;
@@ -49,7 +53,7 @@ class CreateUser extends Command
 
         $user->save();
 
-        $postCreationFn = \Opis\Closure\unserialize(config('createuser.post_creation_fn'));
+        $postCreationFn = $unserializeFn(config('createuser.post_creation_fn'));
 
         $postCreationFn($user);
 
