@@ -4,6 +4,7 @@ namespace Kaishiyoku\CreateUser\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
+use Opis\Closure\SerializableClosure;
 
 class CreateUser extends Command
 {
@@ -29,6 +30,12 @@ class CreateUser extends Command
     public function handle()
     {
         $isSerializationEnabled = config('createuser.enable_serialization') ?? false;
+        
+        $securityProvider = SerializableClosure::getSecurityProvider();
+
+        if ($securityProvider) {
+            SerializableClosure::removeSecurityProvider();
+        }
 
         $unserializeFn = $isSerializationEnabled ? function ($data) { return \Opis\Closure\unserialize($data); } : function ($data) { return $data; };
 
